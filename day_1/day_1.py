@@ -4,7 +4,7 @@ from typing import List, Tuple
 
 file_name = "day_1_input.txt"
 script_dir = Path(__file__).parent
-file_path = script_dir / "day_1_input.txt"
+file_path = script_dir / file_name
 
 
 def read_file_to_lists(file_path: Path) -> Tuple[List[int], List[int]]:
