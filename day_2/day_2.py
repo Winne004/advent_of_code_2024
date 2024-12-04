@@ -1,6 +1,5 @@
-from collections import Counter
 from pathlib import Path
-from typing import Generator, List, Tuple, Callable
+from typing import Callable, Generator, List
 
 file_name = "day_2_input.txt"
 script_dir = Path(__file__).parent
