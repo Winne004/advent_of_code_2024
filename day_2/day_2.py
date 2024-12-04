@@ -20,7 +20,7 @@ def factory_based_on_order(line: List[int]) -> Callable[[List[int]], bool]:
 def ascending_handler(line: List[int]) -> bool:
     for x in range(1, len(line)):
         diff = line[x] - line[x - 1]
-        if not (1 <= diff <= 3) or not line[x - 1] < line[x]:
+        if not (1 <= diff <= 3):
             return False
     return True
 
@@ -28,7 +28,7 @@ def ascending_handler(line: List[int]) -> bool:
 def descending_handler(line: List[int]) -> bool:
     for x in range(1, len(line)):
         diff = line[x - 1] - line[x]
-        if not (1 <= diff <= 3) or not line[x - 1] > line[x]:
+        if not (1 <= diff <= 3):
             return False
     return True
 
@@ -43,7 +43,8 @@ def is_safe(line: List[int]) -> bool:
 def is_safe_pt2(line: List[int]) -> bool:
     for x in range(0, len(line)):
         tmp_line = line[:x] + line[x + 1 :]
-        if descending_handler(tmp_line) or ascending_handler(tmp_line):
+        handler = factory_based_on_order(line)
+        if handler(tmp_line):
             return True
     return False
 
