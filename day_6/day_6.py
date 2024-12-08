@@ -24,6 +24,7 @@ class Guard:
         self.grid = grid
         self.x, self.y = self.find_starting_point(grid)
         self.previous_step = None
+        self.add_to_trace()
 
     def go_down(self):
         self.y += 1
@@ -50,11 +51,13 @@ class Guard:
         self.directions[self.current_direction]()
         return self.x, self.y
 
+    def add_to_trace(self):
+        self.trace.add((self.x, self.y))
+
     def find_starting_point(self, grid):
         for y, row in enumerate(grid):
             for x, cell in enumerate(row):
                 if cell == "^":
-                    self.trace.add((x, y))
                     return x, y
         return None
 
@@ -71,7 +74,7 @@ class Guard:
                 self.turn_right()
             else:
                 self.previous_step = (self.x, self.y)
-                self.trace.add((self.x, self.y))
+                self.add_to_trace()
                 print(self.x, self.y)
             self.generate_coords()
 
@@ -81,7 +84,7 @@ def main() -> None:
     grid = read_file_content(file_path).splitlines()
     directions = Guard(grid=grid)
     directions.navigate()
-    print(len(directions.trace) + 1)
+    print(len(directions.trace))
 
 
 if __name__ == "__main__":
