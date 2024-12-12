@@ -1,5 +1,6 @@
 from pathlib import Path
 from collections import Counter
+from typing import Callable
 
 file_name = "day_10_input.txt"
 script_dir = Path(__file__).parent
@@ -10,35 +11,26 @@ def read_file_content(file_path: Path) -> str:
     return file_path.read_text(encoding="utf-8")
 
 
-def go_down(x, y):
-    return (x, y + 1)
-
-
-def go_up(x, y):
-    return (x, y - 1)
-
-
-def go_left(x, y):
-    return (x - 1, y)
-
-
-def go_right(x, y):
-    return (x + 1, y)
-
-
 directions = [
-    go_down,
-    go_up,
-    go_left,
-    go_right,
+    lambda x, y: (x, y + 1),  # Down
+    lambda x, y: (x, y - 1),  # Up
+    lambda x, y: (x - 1, y),  # Left
+    lambda x, y: (x + 1, y),  # Right
 ]
 
 
-def in_bounds(x, y, grid):
+def in_bounds(x, y, grid) -> bool:
     return 0 <= x < len(grid[0]) and 0 <= y < len(grid)
 
 
-def find_trail_head(grid, x, y, search_string, move_directions, seen):
+def find_trail_head(
+    grid: list[str],
+    x: int,
+    y: int,
+    search_string: str,
+    move_directions: list[Callable],
+    seen: set,
+):
     res = 0
 
     if not in_bounds(x, y, grid):
@@ -59,11 +51,19 @@ def find_trail_head(grid, x, y, search_string, move_directions, seen):
     return res
 
 
-def record_step(path, x, y):
+def record_step(path: str, x: int, y: int) -> str:
     return path + str(x) + str(y)
 
 
-def find_distinct_trail_head(grid, x, y, search_string, path, move_directions, seen):
+def find_distinct_trail_head(
+    grid: list[str],
+    x: int,
+    y: int,
+    search_string: str,
+    path: str,
+    move_directions: list[Callable],
+    seen: set,
+):
     res = 0
 
     path = record_step(path, x, y)
@@ -89,7 +89,7 @@ def find_distinct_trail_head(grid, x, y, search_string, path, move_directions, s
     return res
 
 
-def main():
+def main() -> None:
     trail_map = read_file_content(file_path).splitlines()
     res_pt_1 = 0
     res_pt_2 = 0
