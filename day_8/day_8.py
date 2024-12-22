@@ -57,9 +57,12 @@ def main():
         antenna_locations = get_antennas_locations(grid)
         for loc_1, loc_2 in iterate_antennas(antenna_locations):
             anti_node_offset = generate_antinodes(loc_1, loc_2)
-            anti_node = (loc_1[0] + anti_node_offset[0], loc_1[1] + anti_node_offset[1])
-            if in_bounds(anti_node[1], anti_node[0], grid):
+            y, x = loc_1
+            while in_bounds(x, y, grid):
+                anti_node = (y, x)
                 unique_locs.add(anti_node)
+                y += anti_node_offset[0]
+                x += anti_node_offset[1]
         print(f"Unique locations: {unique_locs}")
         print(f"Number of unique locations: {len(unique_locs)}")
 
