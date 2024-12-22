@@ -27,7 +27,6 @@ def create_disk_map(disk_map: str) -> list:
 
 
 def two_pointer(disk_map: list) -> list:
-    disk_map = list(disk_map)
     i, j = 0, len(disk_map) - 1
     while i < j:
         while i < j and disk_map[i]:
@@ -50,11 +49,43 @@ def calculate_checksum(line: list) -> int:
     return res
 
 
+def find_contiguous_space(disk_map: list, target: int, finish: int) -> int:
+    i = 0
+
+    while i < finish:
+        none_count = 0
+        while not disk_map[i + none_count]:
+            none_count += 1
+            if none_count >= target:
+                for _ in range(i, i + target):
+                    disk_map[i], disk_map[finish] = disk_map[finish], disk_map[i]
+                    i += 1
+                    finish -= 1
+                return disk_map
+        i += 1
+    return disk_map
+
+
+def pt_2(disk_map: list) -> int:
+    i, j = 0, len(disk_map) - 1
+    while j >= 0:
+        while i < j and not disk_map[j]:
+            j -= 1
+        space_needed = disk_map.count(disk_map[j])
+        disk_map = find_contiguous_space(disk_map, space_needed, j)
+        j -= 1
+
+    return disk_map
+
+
 def main():
     disk_map = read_file_content(file_path)
-    line = create_disk_map(disk_map)
-    line = two_pointer(line)
-    print(calculate_checksum(line))
+    disk_map = create_disk_map(disk_map)
+    disk_map_p2 = disk_map.copy()
+
+    print(f"P1: {calculate_checksum(two_pointer(disk_map))}")
+
+    print(f"P2: {calculate_checksum(pt_2(disk_map_p2))}")
 
 
 if __name__ == "__main__":
