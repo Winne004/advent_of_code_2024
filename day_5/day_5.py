@@ -37,7 +37,25 @@ def find_middle(update: List[str]) -> int:
     return int(update[len(update) // 2])
 
 
+def bubble(arr: List[str], item):
+    for i in range(len(arr) + 1):
+        yield arr[:i] + [item] + arr[i:]
+
+
+def pt_2(arr: List[str], ordering_rules: dict) -> bool:
+    res = []
+    for x in arr:
+        for match in bubble(res, x):
+            if is_right_order(ordering_rules, match):
+                res = match
+                break
+    return res
+
+
 def main():
+    for x in bubble(["a", "b", "c"], "d"):
+        print(x)
+
     read_file_to_lists(file_path)
     pt_1_res = 0
     pt_2_res = 0
@@ -45,6 +63,10 @@ def main():
     for i, update in enumerate(updates):
         if is_right_order(ordering_rules, update):
             pt_1_res += find_middle(update)
+        else:
+            if rearranged := pt_2(update, ordering_rules):
+                pt_2_res += find_middle(rearranged)
+        print(f"Progress: {i}/{len(updates)}")
 
     print(pt_1_res)
     print(pt_2_res)
