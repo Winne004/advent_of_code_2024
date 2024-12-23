@@ -1,5 +1,4 @@
 from pathlib import Path
-from collections import Counter
 from typing import Callable
 
 file_name = "day_10_input.txt"
