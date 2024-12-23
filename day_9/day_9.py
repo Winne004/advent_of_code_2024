@@ -51,7 +51,6 @@ def calculate_checksum(line: list) -> int:
 
 def find_contiguous_space(disk_map: list, target: int, finish: int) -> int:
     i = 0
-
     while i < finish:
         none_count = 0
         while not disk_map[i + none_count]:
