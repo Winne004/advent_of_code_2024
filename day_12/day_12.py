@@ -1,17 +1,11 @@
 from pathlib import Path
 
-###############################################################################
-# Adjust these paths as needed
-###############################################################################
 file_name = "day_12_input.txt"
 script_dir = Path(__file__).parent
 file_path = script_dir / file_name
 
 
 def read_file_content(file_path: Path) -> str:
-    """
-    Read the file as a string with UTF-8 encoding.
-    """
     return file_path.read_text(encoding="utf-8")
 
 
