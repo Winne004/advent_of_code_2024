@@ -1,6 +1,6 @@
 from pathlib import Path
 
-file_name = "day_12_test.txt"
+file_name = "day_12_input.txt"
 script_dir = Path(__file__).parent
 file_path = script_dir / file_name
 
@@ -30,6 +30,38 @@ def count_external_corners(x, y, grid, value) -> int:
         ) and (
             not in_bounds(corner_2_x, corner_2_y, grid)
             or grid[corner_2_y][corner_2_x] != value
+        ):
+            res += 1
+    return res
+
+
+def count_internal_corners(x, y, grid, value) -> int:
+    res = 0
+
+    directions_length = len(DIRECTIONS)
+    for direction in range(directions_length):
+        corner_1_x, corner_1_y = DIRECTIONS[direction](x, y)
+        corner_2_x, corner_2_y = DIRECTIONS[direction - 1 % directions_length](x, y)
+
+        if corner_1_x != x:
+            diagonal_x = corner_1_x
+        else:
+            diagonal_x = corner_2_x
+
+        if corner_1_y != y:
+            diagonal_y = corner_1_y
+        else:
+            diagonal_y = corner_2_y
+        if (
+            (
+                in_bounds(corner_1_x, corner_1_y, grid)
+                and grid[corner_1_y][corner_1_x] == value
+            )
+            and (
+                in_bounds(corner_2_x, corner_2_y, grid)
+                and grid[corner_2_y][corner_2_x] == value
+            )
+            and (grid[diagonal_y][diagonal_x] != value)
         ):
             res += 1
     return res
@@ -101,6 +133,7 @@ def find_sides(
         return 0
 
     res = count_external_corners(x, y, grid, value)
+    res += count_internal_corners(x, y, grid, value)
 
     for direction in DIRECTIONS:
         x_offset, y_offset = direction(x, y)
@@ -113,7 +146,8 @@ def main() -> None:
 
     visited_area = set()
 
-    result = 0
+    price = 0
+    discounted_price = 0
 
     count_external_corners(0, 0, flower_bed, "A")
 
@@ -123,7 +157,8 @@ def main() -> None:
                 area = find_region(flower_bed, x, y, visited_area, cell_value)
                 perimeter = find_perimeter(flower_bed, x, y, set(), cell_value)
                 sides = find_sides(flower_bed, x, y, set(), cell_value)
-                result += area * perimeter
+                price += area * perimeter
+                discounted_price += area * sides
                 print(
                     f"Cell value: {cell_value}\n"
                     + f"Region: {area} cells\n"
@@ -131,7 +166,8 @@ def main() -> None:
                     + f" Sides: {sides}\n\n"
                 )
 
-    print(result)
+    print(f"Price: {price}")
+    print(f"Discounted Price: {discounted_price}")
 
 
 if __name__ == "__main__":
