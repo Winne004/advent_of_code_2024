@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Generator, Tuple
 
 file_name = "day_12_input.txt"
 script_dir = Path(__file__).parent
@@ -17,13 +18,18 @@ DIRECTIONS = [
 ]
 
 
-def count_external_corners(x, y, grid, value) -> int:
-    res = 0
+def yield_corners(x: int, y: int) -> Generator[Tuple[int, int, int, int], None, None]:
     directions_length = len(DIRECTIONS)
     for direction in range(directions_length):
         corner_1_x, corner_1_y = DIRECTIONS[direction](x, y)
-        corner_2_x, corner_2_y = DIRECTIONS[direction - 1 % directions_length](x, y)
+        corner_2_x, corner_2_y = DIRECTIONS[(direction - 1) % directions_length](x, y)
+        yield corner_1_x, corner_1_y, corner_2_x, corner_2_y
 
+
+def count_external_corners(x: int, y: int, grid: list[str], value: str) -> int:
+    res = 0
+
+    for corner_1_x, corner_1_y, corner_2_x, corner_2_y in yield_corners(x, y):
         if (
             not in_bounds(corner_1_x, corner_1_y, grid)
             or grid[corner_1_y][corner_1_x] != value
@@ -35,23 +41,15 @@ def count_external_corners(x, y, grid, value) -> int:
     return res
 
 
-def count_internal_corners(x, y, grid, value) -> int:
+def count_internal_corners(x: int, y: int, grid: list[str], value: str) -> int:
     res = 0
 
-    directions_length = len(DIRECTIONS)
-    for direction in range(directions_length):
-        corner_1_x, corner_1_y = DIRECTIONS[direction](x, y)
-        corner_2_x, corner_2_y = DIRECTIONS[direction - 1 % directions_length](x, y)
+    for corner_1_x, corner_1_y, corner_2_x, corner_2_y in yield_corners(x, y):
 
-        if corner_1_x != x:
-            diagonal_x = corner_1_x
-        else:
-            diagonal_x = corner_2_x
+        diagonal_x, diagonal_y = calc_internal_corner_coords(
+            x, y, corner_1_x, corner_1_y, corner_2_x, corner_2_y
+        )
 
-        if corner_1_y != y:
-            diagonal_y = corner_1_y
-        else:
-            diagonal_y = corner_2_y
         if (
             (
                 in_bounds(corner_1_x, corner_1_y, grid)
@@ -67,7 +65,15 @@ def count_internal_corners(x, y, grid, value) -> int:
     return res
 
 
-def in_bounds(x, y, grid) -> bool:
+def calc_internal_corner_coords(
+    x: int, y: int, corner_1_x: int, corner_1_y: int, corner_2_x: int, corner_2_y: int
+) -> Tuple[int, int]:
+    diagonal_x = corner_1_x if corner_1_x != x else corner_2_x
+    diagonal_y = corner_1_y if corner_1_y != y else corner_2_y
+    return diagonal_x, diagonal_y
+
+
+def in_bounds(x: int, y: int, grid: list[str]) -> bool:
     return 0 <= x < len(grid[0]) and 0 <= y < len(grid)
 
 
@@ -148,8 +154,6 @@ def main() -> None:
 
     price = 0
     discounted_price = 0
-
-    count_external_corners(0, 0, flower_bed, "A")
 
     for y, row in enumerate(flower_bed):
         for x, cell_value in enumerate(row):
